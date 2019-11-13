@@ -9,7 +9,7 @@ from unityagents import UnityEnvironment
 from agent import Agent
 
 
-def evaluate_agent(agent, env):
+def evaluate_agent(agent, env, runs=10):
     """Agent training function
 
     Args:
@@ -20,27 +20,29 @@ def evaluate_agent(agent, env):
         score (float): total score of episode
     """
     brain_name = env.brain_names[0]
-    # reset the environment
-    env_info = env.reset(train_mode=False)[brain_name]
-    # get the current state
-    states = env_info.vector_observations
-    # initialize the score
-    _scores = np.zeros(len(env_info.agents))
-    while True:
-        actions = agent.act(states, add_noise=False)
-        # Perform action in the environment
-        env_info = env.step(actions)[brain_name]
-        # Get next state, reward and completion boolean
-        next_states = env_info.vector_observations
-        rewards = env_info.rewards
-        dones = env_info.local_done
-        # Update episode score
-        states = next_states
-        _scores += rewards
-        if np.any(dones):
-            break
-
-    return np.mean(_scores)
+    scores = np.zeros(runs)
+    for idx in range(runs):
+        # reset the environment
+        env_info = env.reset(train_mode=False)[brain_name]
+        # get the current state
+        states = env_info.vector_observations
+        # initialize the score
+        _scores = np.zeros(len(env_info.agents))
+        while True:
+            actions = agent.act(states, add_noise=False)
+            # Perform action in the environment
+            env_info = env.step(actions)[brain_name]
+            # Get next state, reward and completion boolean
+            next_states = env_info.vector_observations
+            rewards = env_info.rewards
+            dones = env_info.local_done
+            # Update episode score
+            states = next_states
+            _scores += rewards
+            if np.any(dones):
+                break
+        scores[idx] = np.mean(_scores)
+    return np.mean(scores)
 
 
 def main(args):
@@ -78,7 +80,7 @@ def main(args):
     agent.actor_local.load_state_dict(state_dict)
 
     # Evaluation run
-    score = evaluate_agent(agent, env)
+    score = evaluate_agent(agent, env, runs=args.runs)
 
     print(f"Evaluation score: {score}")
     env.close()
@@ -92,6 +94,7 @@ if __name__ == "__main__":
     parser.add_argument("--no-graphics", dest="no_graphics",
                         help="Should graphical environment be disabled",
                         action="store_true")
+    parser.add_argument("--runs", default=10, type=int, help='Number of evaluation runs to perform')
     # Input / Output
     parser.add_argument('--env-path', default='./Tennis_Linux/Tennis.x86_64',
                         help='path to executable unity environment')

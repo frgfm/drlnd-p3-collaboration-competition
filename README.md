@@ -66,7 +66,7 @@ Then extract the archive in the project folder.
 If you wish to use the agent trained by repo owner, you can download the model parameters as follows:
 
 ```shell
-wget https://github.com/frgfm/drlnd-p3-collaboration-competition/releases/download/v0.1.0/maddpg_model.pt
+wget https://github.com/frgfm/drlnd-p3-collaboration-competition/releases/download/v0.1.0/maddpg_actor.pt
 ```
 
 
@@ -84,7 +84,7 @@ python train.py --help
 Below you can find an example to train your agent:
 
 ```shell
-python train.py --deterministic --lr 5e-4 --no-graphics
+python train.py --deterministic --no-graphics
 ```
 
 ### Evaluation
@@ -92,7 +92,7 @@ python train.py --deterministic --lr 5e-4 --no-graphics
 You can use an existing model's checkpoint to evaluate your agent as follows:
 
 ```shell
-python evaluate.py --checkpoint ./maddpg_model.pt
+python evaluate.py --checkpoint ./maddpg_actor.pt
 ```
 
 
@@ -101,10 +101,9 @@ python evaluate.py --checkpoint ./maddpg_model.pt
 
 This implementation is vastly based on the following papers:
 
-- [DQN paper](https://storage.googleapis.com/deepmind-media/dqn/DQNNaturePaper.pdf)
-- [Double DQN](https://arxiv.org/abs/1509.06461)
-- [Dueling DQN](https://arxiv.org/abs/1511.06581)
-- [Prioritized Experience replay](https://arxiv.org/abs/1511.05952)
+- [Asynchronous Actor Critic](https://arxiv.org/pdf/1602.01783.pdf)
+- [Proximal Policy Optimization](https://arxiv.org/pdf/1707.06347.pdf)
+- [DDPG](https://openreview.net/pdf?id=SyZipzbCb)
 
 
 
